@@ -1,3 +1,9 @@
+<div style="center;width:100%">
+    <img src="public/test.jpg" style="width:100%;height:150px;object-fit:cover;border-radius:12px;">
+</div>
+
+---
+
 # 💫 About Me:
 Hi, I’m katniis, a full-time human (allegedly), part-time bug creator, and accidental software developer who definitely did not mean to push that to main. I write code the way a storm writes poetry—loud, confusing, and occasionally beautiful if you squint hard enough.<br><br>I survive on caffeine, questionable logic, and that one StackOverflow post from 2013 that still solves 90% of my problems. My projects range from "This is genius" to "Why does this exist?" with no in-between. If you see strange commits at 3 AM, ignore it. That was Future Me’s problem. Present Me refuses accountability.<br><br>If my code works, it was intentional.<br>If it doesn’t, that’s a feature. Probably.<br><br>Welcome to my GitHub—where chaos compiles. Sometimes.
 
