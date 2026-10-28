@@ -34,3 +34,5 @@ Hi, I’m katniis, a full-time human (allegedly), part-time bug creator, and acc
 
 </div>
 -->
+
+<img alt="&quot;She exist&quot;." src="https://github.com/katniis/katniis/blob/main/lilith.gif?raw=true" width="100%">
