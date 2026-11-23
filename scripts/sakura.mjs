@@ -308,20 +308,24 @@ export function render(days, seedStr = "sakura", pw = 240, ph = 150, PX = 4) {
       if (v) paths[v] += `M${x} ${y}h${e - x}v1h${x - e}z`;
       x = e;
     }
-  const W = pw * PX, H = ph * PX;
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" shape-rendering="crispEdges">`;
+  // crop the empty sky above the crown so the image is only as tall as the tree
+  let top = 0;
+  while (top < ph - 3 && !pkind.subarray(top * pw, (top + 1) * pw).some((k) => k === PK_WOOD || k === PK_BLOOM)) top++;
+  top = Math.max(0, top - 8);
+  const W = pw * PX, H = (ph - top) * PX, Y0 = top * PX;
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${Y0} ${W} ${H}" width="${W}" height="${H}" shape-rendering="crispEdges">`;
   svg += `<style>.s{animation:s ease-in-out infinite alternate}.p{animation:f linear infinite}`;
   svg += `@keyframes s{from{transform:translateX(-6px)}to{transform:translateX(6px)}}`;
   svg += `@keyframes f{0%{transform:translate(0,0);opacity:0}8%{opacity:1}85%{opacity:1}100%{transform:translate(var(--dx),var(--dy));opacity:0}}`;
   svg += `@media(prefers-reduced-motion:reduce){.s,.p{animation:none}}</style>`;
   svg += `<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${BG_TOP}"/><stop offset="1" stop-color="${BG_BOT}"/></linearGradient></defs>`;
-  svg += `<rect width="${W}" height="${H}" rx="10" fill="url(#bg)"/>`;
+  svg += `<rect y="${Y0}" width="${W}" height="${H}" rx="10" fill="url(#bg)"/>`;
   svg += `<g transform="scale(${PX})">`;
   paths.forEach((d, i) => { if (d) svg += `<path fill="${tones[i]}" d="${d}"/>`; });
   svg += `</g>`;
   // falling petals, one per recent contribution
   for (let i = 0; i < T.petals; i++) {
-    const [sx, sy] = sources.length && random() < 0.85 ? sources[(random() * sources.length) | 0] : [random() * pw, random() * 10];
+    const [sx, sy] = sources.length && random() < 0.85 ? sources[(random() * sources.length) | 0] : [random() * pw, top + random() * 10];
     const x = (sx + rand(-1, 1)) * PX, y = sy * PX;
     const dur = rand(7, 14), dy = (ground - sy) * PX;
     svg += `<g class="s" style="animation-duration:${rand(1.5, 3).toFixed(1)}s"><rect class="p" x="${x | 0}" y="${y | 0}" width="${PX}" height="${PX}" fill="${RAMP[(random() * 4) | 0]}" style="--dx:${(rand(10, 60) | 0)}px;--dy:${dy | 0}px;animation-duration:${dur.toFixed(1)}s;animation-delay:-${rand(0, dur).toFixed(1)}s"/></g>`;
