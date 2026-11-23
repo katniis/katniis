@@ -35,4 +35,15 @@ Hi, I’m katniis, a full-time human (allegedly), part-time bug creator, and acc
 </div>
 -->
 
-<img alt="&quot;She exist&quot;." src="https://github.com/katniis/katniis/blob/main/lilith.gif?raw=true" width="100%">
+<!-- <img alt="&quot;She exist&quot;." src="https://github.com/katniis/katniis/blob/main/lilith.gif?raw=true" width="100%"> -->
+
+<div align="center">
+
+<img alt="Sakura tree grown from my contributions" src="public/sakura.svg" width="100%">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/snake-dark.svg">
+  <img alt="Snake eating my contribution graph" src="public/snake.svg" width="100%">
+</picture>
+
+</div>

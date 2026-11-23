@@ -1,0 +1,33 @@
+name: Update profile animations
+on:
+  schedule: [{ cron: "0 */12 * * *" }]
+  workflow_dispatch:
+  push: { branches: [main], paths: [scripts/**, .github/workflows/profile.yml] }
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Sakura tree
+        run: node scripts/sakura.mjs katniis public/sakura.svg
+        env:
+          # swap for a PAT secret (read:user) to include private contributions
+          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: Platane/snk/svg-only@v3
+        with:
+          github_user_name: katniis
+          outputs: |
+            public/snake.svg
+            public/snake-dark.svg?palette=github-dark
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/sakura.svg public/snake.svg public/snake-dark.svg
+          git diff --cached --quiet || (git commit -m "Update profile animations" && git push)
