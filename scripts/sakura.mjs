@@ -52,7 +52,7 @@ export function traits(days) {
     recent, year, streak, idle,
     form: streak >= 7 ? "shidare" : recent >= 60 ? "bush" : "yoshino",
     bloom: idle ? 0.04 : clamp(0.25 + recent / 60, 0.25, 1),
-    size: clamp(0.62 + year / 2500, 0.62, 1),
+    size: clamp(0.55 + year / 3000, 0.55, 0.8), // capped so the image never fills the full frame height
     petals: idle ? 0 : clamp(recent, 6, 90),
   };
 }
