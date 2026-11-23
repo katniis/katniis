@@ -53,7 +53,8 @@ export function traits(days) {
     form: streak >= 7 ? "shidare" : recent >= 60 ? "bush" : "yoshino",
     bloom: idle ? 0.04 : clamp(0.25 + recent / 60, 0.25, 1),
     size: clamp(0.55 + year / 3000, 0.55, 0.8), // capped so the image never fills the full frame height
-    petals: idle ? 0 : clamp(recent, 6, 90),
+    // always some falling; an idle tree only drops a few faded petals
+    petals: idle ? 15 : clamp(recent, 20, 90),
   };
 }
 
@@ -314,21 +315,24 @@ export function render(days, seedStr = "sakura", pw = 240, ph = 150, PX = 4) {
   top = Math.max(0, top - 8);
   const W = pw * PX, H = (ph - top) * PX, Y0 = top * PX;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${Y0} ${W} ${H}" width="${W}" height="${H}" shape-rendering="crispEdges">`;
-  svg += `<style>.s{animation:s ease-in-out infinite alternate}.p{animation:f linear infinite}`;
-  svg += `@keyframes s{from{transform:translateX(-6px)}to{transform:translateX(6px)}}`;
-  svg += `@keyframes f{0%{transform:translate(0,0);opacity:0}8%{opacity:1}85%{opacity:1}100%{transform:translate(var(--dx),var(--dy));opacity:0}}`;
+  svg += `<style>.s{animation:s ease-in-out infinite alternate}.p{animation:f linear infinite;transform-box:fill-box;transform-origin:center}`;
+  svg += `@keyframes s{from{transform:translateX(-10px)}to{transform:translateX(10px)}}`;
+  svg += `@keyframes f{0%{transform:translate(0,0) rotate(0);opacity:0}8%{opacity:1}85%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}`;
   svg += `@media(prefers-reduced-motion:reduce){.s,.p{animation:none}}</style>`;
   svg += `<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${BG_TOP}"/><stop offset="1" stop-color="${BG_BOT}"/></linearGradient></defs>`;
   svg += `<rect y="${Y0}" width="${W}" height="${H}" rx="10" fill="url(#bg)"/>`;
   svg += `<g transform="scale(${PX})">`;
   paths.forEach((d, i) => { if (d) svg += `<path fill="${tones[i]}" d="${d}"/>`; });
   svg += `</g>`;
-  // falling petals, one per recent contribution
+  // falling petals, one per recent contribution; pixel petal shapes 2-3 tree-pixels wide
+  const SHAPES = ["h2v1h-1v1h-1z", "h1v1h1v1h-2z", "h2v2h-1v-1h-1z", "h3v1h-1v1h-1v-1h-1z"];
+  const colors = T.idle ? ["#b08aa6", "#9c7a8e", "#a8703c"] : RAMP.slice(0, 5);
   for (let i = 0; i < T.petals; i++) {
-    const [sx, sy] = sources.length && random() < 0.85 ? sources[(random() * sources.length) | 0] : [random() * pw, top + random() * 10];
+    const [sx, sy] = sources.length && random() < 0.85 ? sources[(random() * sources.length) | 0] : [random() * pw, top + random() * 20];
     const x = (sx + rand(-1, 1)) * PX, y = sy * PX;
     const dur = rand(7, 14), dy = (ground - sy) * PX;
-    svg += `<g class="s" style="animation-duration:${rand(1.5, 3).toFixed(1)}s"><rect class="p" x="${x | 0}" y="${y | 0}" width="${PX}" height="${PX}" fill="${RAMP[(random() * 4) | 0]}" style="--dx:${(rand(10, 60) | 0)}px;--dy:${dy | 0}px;animation-duration:${dur.toFixed(1)}s;animation-delay:-${rand(0, dur).toFixed(1)}s"/></g>`;
+    const d = `M${x | 0} ${y | 0}` + SHAPES[(random() * SHAPES.length) | 0].replace(/-?\d+/g, (n) => n * PX);
+    svg += `<g class="s" style="animation-duration:${rand(1.5, 3).toFixed(1)}s"><path class="p" d="${d}" fill="${colors[(random() * colors.length) | 0]}" style="--dx:${rand(20, 90) | 0}px;--dy:${dy | 0}px;--r:${(rand(-1, 1) * 540) | 0}deg;animation-duration:${dur.toFixed(1)}s;animation-delay:-${rand(0, dur).toFixed(1)}s"/></g>`;
   }
   return svg + `</svg>`;
 }
